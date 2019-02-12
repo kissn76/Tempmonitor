@@ -13,7 +13,7 @@ public:
 
 private:
     QString tempFile = "/home/nn/temp";
-    QString logFile = "/mnt/log/temp.log";
+    QString logFile = "/home/nn/temp.log";
     QString dateFormat = "yyyy-MM-dd HH:mm:ss";
 };
 
