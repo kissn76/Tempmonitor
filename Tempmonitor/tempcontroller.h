@@ -8,7 +8,7 @@ class TempController : public QObject
     Q_OBJECT
 
 public:
-    TempController(int intervall);
+    TempController(int intervall, QString logFile, QString tempFile);
     ~TempController();
 
 public slots:
@@ -16,6 +16,8 @@ public slots:
 
 private:
     int intervall;
+    QString tempFile;
+    QString logFile;
 };
 
 #endif // TEMPCONTROLLER_H

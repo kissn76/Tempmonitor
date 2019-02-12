@@ -3,9 +3,11 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 
-Updater::Updater()
+Updater::Updater(QString logFile, QString tempFile) : tempFile(tempFile), logFile(logFile)
 {
+    this->dateFormat = "yyyy-MM-dd HH:mm:ss";
 }
 
 Updater::~Updater()
@@ -22,6 +24,9 @@ void Updater::run()
     {
         QTextStream in(&inFile);
         temperature = in.readAll().toDouble() / 1000;
+    } else {
+        qDebug() << tempFile << "is not a valid temperature file!";
+        exit(0);
     }
     inFile.close();
 
@@ -30,6 +35,9 @@ void Updater::run()
     {
         QTextStream out(&outFile);
         out << dateTime << ";" << temperature << endl;
+    } else {
+        qDebug() << logFile << "is not writeable file!";
+        exit(0);
     }
     outFile.close();
 }

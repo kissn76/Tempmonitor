@@ -7,14 +7,14 @@ class Updater : public QThread
 {
     Q_OBJECT
 public:
-    Updater();
+    Updater(QString logFile, QString tempFile);
     ~Updater();
     void run();
 
 private:
-    QString tempFile = "/home/nn/temp";
-    QString logFile = "/home/nn/temp.log";
-    QString dateFormat = "yyyy-MM-dd HH:mm:ss";
+    QString tempFile;
+    QString logFile;
+    QString dateFormat;
 };
 
 #endif // UPDATER_H
