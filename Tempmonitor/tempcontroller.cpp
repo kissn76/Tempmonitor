@@ -4,7 +4,8 @@
 #include <QTimer>
 #include <QDebug>
 
-TempController::TempController(int intervall, QString logFile, QString tempFile) : intervall(intervall), tempFile(tempFile), logFile(logFile)
+TempController::TempController(int intervall, QString logFile, QString tempFile, bool noLog, bool printStdo)
+    : intervall(intervall), tempFile(tempFile), logFile(logFile), noLog(noLog), printStdo(printStdo)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -17,7 +18,7 @@ TempController::~TempController()
 
 void TempController::update()
 {
-    Updater *up = new Updater(logFile, tempFile);
+    Updater *up = new Updater(logFile, tempFile, noLog, printStdo);
     connect(up, SIGNAL(finished()), up, SLOT(deleteLater()));
     up->start();
 }

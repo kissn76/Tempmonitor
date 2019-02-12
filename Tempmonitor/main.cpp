@@ -11,19 +11,25 @@ int main(int argc, char *argv[])
     //https://www.qtcentre.org/threads/67271-Question-on-proper-use-of-QCommandLineOption
     QCommandLineOption i_opt({"i", "intervall"}, "Refresh intervall", "intervall");
     QCommandLineOption l_opt({"l", "logfile"}, "Logfile path", "logfile");
+    QCommandLineOption n_opt({"n", "nolog"}, "Don't log to file");
     QCommandLineOption t_opt({"t", "tempfile"}, "Temperature file path. Usualy in sys filesystem.", "tempfile");
+    QCommandLineOption p_opt({"p", "print"}, "Print to standard output");
     QCommandLineParser parser;
 
     parser.addHelpOption();
     parser.addVersionOption();
     parser.addOption(i_opt);
     parser.addOption(l_opt);
+    parser.addOption(n_opt);
     parser.addOption(t_opt);
+    parser.addOption(p_opt);
     parser.process(QCoreApplication::arguments());
 
     int intervall = parser.value("intervall").toInt();
     int intervallMs = 5 * 1000;
     QString logFile = "/mnt/log/temp.log";
+    bool noLog = false;
+    bool printStdo = false;
     QString tempFile  = "/sys/class/thermal/thermal_zone0/temp";
 
     if (parser.isSet(i_opt))
@@ -49,6 +55,11 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (parser.isSet(n_opt))
+    {
+        noLog = true;
+    }
+
     if (parser.isSet(t_opt))
     {
         QString t_temp = parser.value("tempfile");
@@ -61,7 +72,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    TempController tc(intervallMs, logFile, tempFile);
+    if (parser.isSet(p_opt))
+    {
+        printStdo = true;
+    }
+
+    TempController tc(intervallMs, logFile, tempFile, noLog, printStdo);
 
     return a.exec();
 }

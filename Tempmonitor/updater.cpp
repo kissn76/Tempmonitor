@@ -5,7 +5,8 @@
 #include <QTextStream>
 #include <QDebug>
 
-Updater::Updater(QString logFile, QString tempFile) : tempFile(tempFile), logFile(logFile)
+Updater::Updater(QString logFile, QString tempFile, bool noLog, bool printStdo)
+    : tempFile(tempFile), logFile(logFile), noLog(noLog), printStdo(printStdo)
 {
     this->dateFormat = "yyyy-MM-dd HH:mm:ss";
 }
@@ -30,14 +31,22 @@ void Updater::run()
     }
     inFile.close();
 
-    QFile outFile(logFile);
-    if (outFile.open(QIODevice::Append | QIODevice::Text))
+    if (printStdo)
     {
-        QTextStream out(&outFile);
-        out << dateTime << ";" << temperature << endl;
-    } else {
-        qDebug() << logFile << "is not writeable file!";
-        exit(0);
+        qDebug() << dateTime << ": " << temperature;
     }
-    outFile.close();
+
+    if (!noLog)
+    {
+        QFile outFile(logFile);
+        if (outFile.open(QIODevice::Append | QIODevice::Text))
+        {
+            QTextStream out(&outFile);
+            out << dateTime << ";" << temperature << endl;
+        } else {
+            qDebug() << logFile << "is not writeable file!";
+            exit(0);
+        }
+        outFile.close();
+    }
 }
