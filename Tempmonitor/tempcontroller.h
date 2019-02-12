@@ -1,6 +1,8 @@
 #ifndef TEMPCONTROLLER_H
 #define TEMPCONTROLLER_H
 
+#include "settings.h"
+
 #include <QObject>
 
 class TempController : public QObject
@@ -8,18 +10,14 @@ class TempController : public QObject
     Q_OBJECT
 
 public:
-    TempController(int intervall, QString logFile, QString tempFile, bool noLog, bool printStdo);
+    TempController(Settings *settings);
     ~TempController();
 
 public slots:
     void update();
 
 private:
-    int intervall;
-    QString tempFile;
-    QString logFile;
-    bool noLog;
-    bool printStdo;
+    Settings *settings;
 };
 
 #endif // TEMPCONTROLLER_H

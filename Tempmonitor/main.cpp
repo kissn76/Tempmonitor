@@ -1,3 +1,4 @@
+#include "settings.h"
 #include "tempcontroller.h"
 
 #include <QCommandLineParser>
@@ -25,59 +26,56 @@ int main(int argc, char *argv[])
     parser.addOption(p_opt);
     parser.process(QCoreApplication::arguments());
 
-    int intervall = parser.value("intervall").toInt();
-    int intervallMs = 5 * 1000;
-    QString logFile = "/mnt/log/temp.log";
-    bool noLog = false;
-    bool printStdo = false;
-    QString tempFile  = "/sys/class/thermal/thermal_zone0/temp";
+    Settings *settings = new Settings();
 
     if (parser.isSet(i_opt))
     {
-        if (intervall <= 0)
+        int i_tmp = parser.value("intervall").toInt();
+
+        if (i_tmp <= 0)
         {
             qDebug() << "Intervall must be a higher integer then 0!";
             parser.showHelp();
         } else {
-            intervallMs = intervall * 1000;
+            settings->setIntervall(i_tmp * 1000);
         }
     }
 
     if (parser.isSet(l_opt))
     {
-        QString l_temp = parser.value("logfile");
+        QString l_tmp = parser.value("logfile");
 
-        if (l_temp.isEmpty())
+        if (l_tmp.isEmpty())
         {
             parser.showHelp();
         } else {
-            logFile = l_temp;
+            settings->setLogFile(l_tmp);
         }
     }
 
     if (parser.isSet(n_opt))
     {
-        noLog = true;
+        settings->setNoLog(true);
     }
 
     if (parser.isSet(t_opt))
     {
-        QString t_temp = parser.value("tempfile");
+        QString t_tmp = parser.value("tempfile");
 
-        if (t_temp.isEmpty())
+        if (t_tmp.isEmpty())
         {
             parser.showHelp();
         } else {
-            tempFile = t_temp;
+            settings->setTempFile(t_tmp);
         }
     }
 
     if (parser.isSet(p_opt))
     {
-        printStdo = true;
+        settings->setPrintStdo(true);
     }
 
-    TempController tc(intervallMs, logFile, tempFile, noLog, printStdo);
+    TempController tc(settings);
 
     return a.exec();
 }

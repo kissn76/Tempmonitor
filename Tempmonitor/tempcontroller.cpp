@@ -2,14 +2,13 @@
 #include "updater.h"
 
 #include <QTimer>
-#include <QDebug>
 
-TempController::TempController(int intervall, QString logFile, QString tempFile, bool noLog, bool printStdo)
-    : intervall(intervall), tempFile(tempFile), logFile(logFile), noLog(noLog), printStdo(printStdo)
+TempController::TempController(Settings *settings)
+    : settings(settings)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(intervall);
+    timer->start(settings->getIntervall());
 }
 
 TempController::~TempController()
@@ -18,7 +17,7 @@ TempController::~TempController()
 
 void TempController::update()
 {
-    Updater *up = new Updater(logFile, tempFile, noLog, printStdo);
+    Updater *up = new Updater(settings);
     connect(up, SIGNAL(finished()), up, SLOT(deleteLater()));
     up->start();
 }

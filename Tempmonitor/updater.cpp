@@ -5,10 +5,9 @@
 #include <QTextStream>
 #include <QDebug>
 
-Updater::Updater(QString logFile, QString tempFile, bool noLog, bool printStdo)
-    : tempFile(tempFile), logFile(logFile), noLog(noLog), printStdo(printStdo)
+Updater::Updater(Settings *settings)
+    : settings(settings)
 {
-    this->dateFormat = "yyyy-MM-dd HH:mm:ss";
 }
 
 Updater::~Updater()
@@ -17,34 +16,34 @@ Updater::~Updater()
 
 void Updater::run()
 {
-    QString dateTime = QDateTime::currentDateTime().toString(dateFormat);
+    QString dateTime = QDateTime::currentDateTime().toString(settings->getDateFormat());
 
     double temperature = 0;
-    QFile inFile(tempFile);
+    QFile inFile(settings->getTempFile());
     if (inFile.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QTextStream in(&inFile);
         temperature = in.readAll().toDouble() / 1000;
     } else {
-        qDebug() << tempFile << "is not a valid temperature file!";
+        qDebug() << inFile.fileName() << "is not a valid temperature file!";
         exit(0);
     }
     inFile.close();
 
-    if (printStdo)
+    if (settings->isPrintStdo())
     {
         qDebug() << dateTime << ": " << temperature;
     }
 
-    if (!noLog)
+    if (!settings->isNoLog())
     {
-        QFile outFile(logFile);
+        QFile outFile(settings->getLogFile());
         if (outFile.open(QIODevice::Append | QIODevice::Text))
         {
             QTextStream out(&outFile);
             out << dateTime << ";" << temperature << endl;
         } else {
-            qDebug() << logFile << "is not writeable file!";
+            qDebug() << outFile.fileName() << "is not writeable file!";
             exit(0);
         }
         outFile.close();
