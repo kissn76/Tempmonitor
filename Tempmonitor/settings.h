@@ -8,7 +8,7 @@ class Settings : public QObject
     Q_OBJECT
 
 public:
-    Settings();
+    Settings(const QString settingsFile = "/etc/tempmonitor/tempmonitor.conf");
     ~Settings();
 
     int getIntervall() const;
@@ -30,12 +30,16 @@ public:
     void setPrintStdo(bool value);
 
 private:
-    int intervall = 5 * 1000;
-    QString tempFile = "/sys/class/thermal/thermal_zone0/temp";
-    QString logFile = "/mnt/log/temp.log";
-    QString dateFormat = "yyyy-MM-dd HH:mm:ss";
+    int intervall;
+    QString tempFile;
+    QString logFile;
+    QString dateFormat;
     bool noLog = false;
     bool printStdo = false;
+    QString settingsFile;
+
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif // SETTINGS_H

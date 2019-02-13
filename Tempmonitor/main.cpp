@@ -15,6 +15,7 @@ int main(int argc, char *argv[])
     QCommandLineOption n_opt({"n", "nolog"}, "Don't log to file");
     QCommandLineOption t_opt({"t", "tempfile"}, "Temperature file path. Usualy in sys filesystem.", "tempfile");
     QCommandLineOption p_opt({"p", "print"}, "Print to standard output");
+    QCommandLineOption c_opt({"c", "config"}, "Start with specified config file", "configfile");
     QCommandLineParser parser;
 
     parser.addHelpOption();
@@ -24,9 +25,19 @@ int main(int argc, char *argv[])
     parser.addOption(n_opt);
     parser.addOption(t_opt);
     parser.addOption(p_opt);
+    parser.addOption(c_opt);
     parser.process(QCoreApplication::arguments());
 
-    Settings *settings = new Settings();
+    Settings *settings;
+
+    if (parser.isSet(c_opt))
+    {
+        QString c_tmp = parser.value("configfile");
+
+        settings = new Settings(c_tmp);
+    } else {
+        settings = new Settings();
+    }
 
     if (parser.isSet(i_opt))
     {
